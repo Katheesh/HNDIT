@@ -1,14 +1,16 @@
-name: Mirror to Gitlab Repo
+name: Mirroring
 
-on: [ push, delete, create ]
+on: [push, delete]
 
 jobs:
-  git-mirror:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wearerequired/git-mirror-action@v1
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
-        with:
-          source-repo: 'git@github.com:Katheesh/HNDIT.git'
-          destination-repo: 'git@gitlab.com:katheesh/hndit.git'
+  to_gitlab:
+    runs-on: ubuntu-18.04
+    steps:                                              # <-- must use actions/checkout@v1 before mirroring!
+    - uses: actions/checkout@v1
+    - uses: pixta-dev/repository-mirroring-action@v1
+      with:
+        target_repo_url:
+          git@gitlab.com:katheesh/hndit.git
+        ssh_private_key:                                # <-- use 'secrets' to pass credential information.
+          ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
+
